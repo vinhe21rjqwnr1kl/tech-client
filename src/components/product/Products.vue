@@ -48,12 +48,69 @@
         </div>
         <div class="mt-4 flex items-center justify-between">
           <span class="text-xl font-black text-slate-900">{{ product.price }}</span>
-          <button class="bg-slate-100 hover:bg-slate-900 text-slate-800 hover:text-white font-semibold text-xs px-4 py-2.5 rounded-xl active:scale-95 transition-all">
+          <button 
+          @click="addToCart(product)"
+          class="bg-slate-100 hover:bg-slate-900 text-slate-800 hover:text-white font-semibold text-xs px-4 py-2.5 rounded-xl active:scale-95 transition-all">
             Add To Cart
           </button>
+          
         </div>
       </div>
     </div>
+
+      <!-- Cart Modal -->
+      <div
+        v-if="isCartModalOpen"
+        @click.self="closeCartModal"
+        class="fixed inset-0 z-99999 bg-black/40 backdrop-blur-sm flex justify-center items-center"
+      >
+        <div class="bg-white p-6 rounded shadow-lg  w-full max-w-2xl max-h-[90vh] overflow-y-auto scrollbar-thin">
+          <h2 class="text-xl font-semibold mb-4">Cart</h2>
+
+          <div v-if="cart.length === 0" class="text-gray-500">Your cart is empty.</div>
+          <div v-else>
+            <div
+              v-for="item in cart"
+              :key="item.id"
+              class="flex items-center border p-4 mb-2"
+            >
+              <!-- Product Image -->
+              <img
+                :src="item.image_url"
+                alt="Product Image"
+                class="w-16 h-16 object-cover rounded mr-4"
+              />
+
+              <!-- Product Details -->
+              <div class="flex-1">
+                <span class="block font-semibold"
+                  >{{ item.name }} (x{{ item.quantity }})</span
+                >
+                <span class="text-gray-500">Price: {{ item.price }}</span>
+              </div>
+
+              <!-- Total Price -->
+              <span class="font-bold text-teal-500">{{
+                (item.price * item.quantity).toFixed(2)
+              }}</span>
+
+              <!-- Remove Button -->
+              <button @click="removeFromCart(item.id)" class="ml-4 text-red-500">
+                X
+              </button>
+            </div>
+          </div>
+
+          <div class="flex justify-end mt-4">
+            <button
+              @click="closeCartModal"
+              class="bg-gray-500 text-white px-4 py-2 rounded"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
 
     <!-- PRODUCT 2 -->
     <!-- <div class="bg-white rounded-3xl border border-slate-100 overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
@@ -152,6 +209,8 @@
 
 <script>
 import axios from "axios";
+import { useCartStore } from '@/stores/cart'
+
 
     export default {
          data() {
@@ -159,6 +218,10 @@ import axios from "axios";
       products: [],
       categories: [],
       brands: [],
+      cart: [],
+      isCartModalOpen: false,
+
+
     };
     
   },
@@ -166,9 +229,38 @@ import axios from "axios";
     this.fetchProducts();
     this.fetchCategories();
     this.fetchBrands();
+    this.loadCartFromLocalStorage();
+
     
   },
   methods:{
+    removeFromCart(productId) {
+      this.cart = this.cart.filter((item) => item.id !== productId);
+    },
+    saveCartToLocalStorage() {
+      localStorage.setItem("cart", JSON.stringify(this.cart));
+    },
+  loadCartFromLocalStorage() {
+      const savedCart = localStorage.getItem("cart");
+      if (savedCart) {
+        this.cart = JSON.parse(savedCart);
+      }
+    },
+  
+    addToCart(product) {
+      const cartStore = useCartStore()
+
+      const cartItem = this.cart.find((item) => item.id === product.id);
+      if (cartItem) {
+        cartItem.quantity++;
+      } else {
+        this.cart.push({ ...product, quantity: 1 });
+      }
+      //this.openCartModal();
+      this.saveCartToLocalStorage();
+      alert("Add to Cart Successfully");
+      this.isCartModalOpen = true;
+    },
   isNewProduct(product) {
       const createdAt = new Date(product.created_at)
       const now = new Date()
@@ -201,6 +293,12 @@ import axios from "axios";
       } catch (error) {
         console.error("Error fetching brands:", error);
       }
+    },
+    openCartModal() {
+      this.isCartModalOpen = true;
+    },
+    closeCartModal() {
+      this.isCartModalOpen = false;
     },
   },
     }

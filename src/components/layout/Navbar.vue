@@ -44,12 +44,14 @@
         </button>
 
         <!-- Cart -->
-        <button class="relative bg-slate-900 text-white w-11 h-11 rounded-xl flex items-center justify-center hover:bg-slate-800 hover:scale-105 shadow-md active:scale-95 transition-all">
+        <router-link to="/checkout" class="relative bg-slate-900 text-white w-11 h-11 rounded-xl flex items-center justify-center hover:bg-slate-800 hover:scale-105 shadow-md active:scale-95 transition-all">
           <span class="text-lg">🛒</span>
           <span class="absolute -top-1.5 -right-1.5 bg-rose-500 text-white text-[11px] font-bold w-5 h-5 rounded-full flex items-center justify-center animate-pulse">
-            2
+              {{ cartStore.cartCount }}
+
           </span>
-        </button>
+        </router-link>
+       
 
       </div>
     </div>
@@ -58,10 +60,10 @@
     </div>
 </template>
 
-<script>
-    export default {
-        
-    }
+<script setup>
+import { useCartStore } from '@/stores/cart'
+
+const cartStore = useCartStore()
 </script>
 
 <style lang="scss" scoped>
