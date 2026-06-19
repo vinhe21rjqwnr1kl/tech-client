@@ -159,7 +159,7 @@ export default {
     async initiatePayment() {
       try {
         // Replace with your API endpoint
-        const response = await axios.post("/api/payment", {
+        const response = await axios.post("http://127.0.0.1:8000/api/payment", {
           amount: this.total, // Replace with actual amount
         });
 
@@ -186,7 +186,7 @@ export default {
 
       try {
         // Send POST request with shipping and cart data
-        const response = await axios.post("/api/orders", orderData);
+        const response = await axios.post("http://127.0.0.1:8000/api/orders", orderData);
 
         // Handle the response (e.g., show a success message)
         alert(response.data.message);
