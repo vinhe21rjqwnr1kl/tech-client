@@ -4,7 +4,7 @@
       <!-- Page Title -->
       <h1 class="text-3xl font-bold text-gray-800 mb-6">Checkout</h1>
       <div>
-        <div v-if="cart.length === 0" class="text-gray-500">Your cart is empty.</div>
+        <div v-if="cartStore.cart.length === 0" class="text-gray-500">Your cart is empty.</div>
         <div v-else>
           <table class="table-auto w-full border-collapse border border-gray-300">
             <thead>
@@ -18,7 +18,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="item in cart" :key="item.id" class="text-center">
+              <tr v-for="item in cartStore.cart" :key="item.id" class="text-center">
                 <td class="border border-gray-300 px-4 py-2">
                   <img
                     :src="item.image_url"
@@ -48,7 +48,7 @@
         </div>
       </div>
       <!-- Checkout Form Section -->
-      <div v-if="cart.length > 0" class="mt-8">
+      <div v-if="cartStore.cart.length > 0" class="mt-8">
         <h2 class="text-xl font-semibold mb-4">Checkout Form</h2>
         <form @submit.prevent="handleSubmit">
           <!-- Name -->
@@ -129,11 +129,14 @@
 
 <script>
 import axios from "axios";
+import { useCartStore } from '@/stores/cart'
+
 export default {
   
   data() {
     return {
-      cart: [],
+      cartStore: useCartStore(),
+
       form: {
         name: "",
         phone: "",
@@ -143,16 +146,12 @@ export default {
     };
   },
   mounted() {
-    // Fetch the cart data from localStorage
-    const savedCart = localStorage.getItem("cart");
-    if (savedCart) {
-      this.cart = JSON.parse(savedCart);
-    }
+   this.cartStore.loadCartFromLocalStorage()
   },
   computed: {
     // Computed property to calculate total sum
     total() {
-      return this.cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+      return this.cartStore.cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
     },
   },
   methods: {
@@ -181,7 +180,7 @@ export default {
         phone: this.form.phone,
         address: this.form.address,
         email: this.form.email,
-        cart_items: this.cart, // Include the cart items here
+        cart_items: this.cartStore.cart, // Include the cart items here
       };
 
       try {
@@ -214,8 +213,11 @@ export default {
         this.form = JSON.parse(savedShipping);
       }
     },
+   
     removeFromCart(productId) {
-      this.cart = this.cart.filter((item) => item.id !== productId);
+       this.cartStore.removeFromCart(productId)
+
+
     },
   },
 };
