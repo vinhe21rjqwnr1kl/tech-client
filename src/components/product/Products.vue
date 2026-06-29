@@ -47,103 +47,72 @@
           <span>★ 4.9</span> <span class="text-slate-300">(42)</span>
         </div>
         <div class="mt-4 flex items-center justify-between">
-          <span class="text-xl font-black text-slate-900">{{ product.price }}</span>
-          <button class="bg-slate-100 hover:bg-slate-900 text-slate-800 hover:text-white font-semibold text-xs px-4 py-2.5 rounded-xl active:scale-95 transition-all">
+          <span class="text-xl font-black text-slate-900">{{formatPrice ( product.price) }}₫</span>
+          <button 
+          @click="cartStore.addToCart(product)"
+          class="bg-slate-100 hover:bg-slate-900 text-slate-800 hover:text-white font-semibold text-xs px-4 py-2.5 rounded-xl active:scale-95 transition-all">
             Add To Cart
           </button>
+          
         </div>
       </div>
     </div>
 
-    <!-- PRODUCT 2 -->
-    <!-- <div class="bg-white rounded-3xl border border-slate-100 overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
-      <div class="relative bg-slate-50 aspect-square overflow-hidden">
-        <img
-          src="https://images.unsplash.com/photo-1541807084-5c52b6b3adef?q=80&w=1200&auto=format&fit=crop"
-          class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
-          alt="iPhone 15 Pro"
-        />
-        <button class="absolute top-4 right-4 bg-white/80 backdrop-blur-sm w-8 h-8 rounded-full flex items-center justify-center text-sm shadow-sm hover:bg-white hover:scale-110 active:scale-95 transition-all text-slate-600" title="Add to Wishlist">
-          ♥
-        </button>
+      <!-- Cart Modal -->
+      <div
+        v-if="cartStore.isCartModalOpen"
+        @click.self="cartStore.closeCartModal"
+        class="fixed inset-0 z-99999 bg-black/40 backdrop-blur-sm flex justify-center items-center"
+      >
+        <div class="bg-white p-6 rounded shadow-lg  w-full max-w-2xl max-h-[90vh] overflow-y-auto scrollbar-thin">
+          <h2 class="text-xl font-semibold mb-4">Cart</h2>
+
+          <div v-if="cartStore.cart.length === 0" class="text-gray-500">Your cart is empty.</div>
+          <div v-else>
+            <div
+              v-for="item in cartStore.cart"
+              :key="item.id"
+              class="flex items-center border p-4 mb-2"
+            >
+              <!-- Product Image -->
+              <img
+                :src="item.image_url"
+                alt="Product Image"
+                class="w-16 h-16 object-cover rounded mr-4"
+              />
+
+              <!-- Product Details -->
+              <div class="flex-1">
+                <span class="block font-semibold"
+                  >{{ item.name }} (x{{ item.quantity }})</span
+                >
+                <span class="text-gray-500">Price: {{ item.price }}</span>
+              </div>
+
+              <!-- Total Price -->
+              <span class="font-bold text-teal-500">{{
+                (item.price * item.quantity).toFixed(2)
+              }}</span>
+
+              <!-- Remove Button -->
+              <button @click="cartStore.removeFromCart(item.id)" class="ml-4 text-red-500">
+                X
+              </button>
+            </div>
+          </div>
+
+          <div class="flex justify-end mt-4">
+            <button
+              @click="cartStore.closeCartModal"
+              class="bg-gray-500 text-white px-4 py-2 rounded"
+            >
+              Close
+            </button>
+          </div>
+        </div>
       </div>
 
-      <div class="p-6">
-        <span class="text-[10px] uppercase font-bold tracking-wider text-slate-400">Smartphones</span>
-        <h3 class="text-lg font-bold text-slate-900 mt-1 truncate group-hover:text-indigo-600 transition-colors">
-          iPhone 15 Pro
-        </h3>
-        <div class="flex items-center gap-1 mt-1 text-xs text-amber-500 font-medium">
-          <span>★ 4.8</span> <span class="text-slate-300">(89)</span>
-        </div>
-        <div class="mt-4 flex items-center justify-between">
-          <span class="text-xl font-black text-slate-900">$1,299</span>
-          <button class="bg-slate-100 hover:bg-slate-900 text-slate-800 hover:text-white font-semibold text-xs px-4 py-2.5 rounded-xl active:scale-95 transition-all">
-            Add To Cart
-          </button>
-        </div>
-      </div>
-    </div> -->
-
-    <!-- PRODUCT 3 -->
-    <!-- <div class="bg-white rounded-3xl border border-slate-100 overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
-      <div class="relative bg-slate-50 aspect-square overflow-hidden">
-        <img
-          src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?q=80&w=1200&auto=format&fit=crop"
-          class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
-          alt="Samsung S25"
-        />
-        <button class="absolute top-4 right-4 bg-white/80 backdrop-blur-sm w-8 h-8 rounded-full flex items-center justify-center text-sm shadow-sm hover:bg-white hover:scale-110 active:scale-95 transition-all text-slate-600" title="Add to Wishlist">
-          ♥
-        </button>
-      </div>
-
-      <div class="p-6">
-        <span class="text-[10px] uppercase font-bold tracking-wider text-slate-400">Smartphones</span>
-        <h3 class="text-lg font-bold text-slate-900 mt-1 truncate group-hover:text-indigo-600 transition-colors">
-          Samsung S25 Ultra
-        </h3>
-        <div class="flex items-center gap-1 mt-1 text-xs text-amber-500 font-medium">
-          <span>★ 4.7</span> <span class="text-slate-300">(51)</span>
-        </div>
-        <div class="mt-4 flex items-center justify-between">
-          <span class="text-xl font-black text-slate-900">$999</span>
-          <button class="bg-slate-100 hover:bg-slate-900 text-slate-800 hover:text-white font-semibold text-xs px-4 py-2.5 rounded-xl active:scale-95 transition-all">
-            Add To Cart
-          </button>
-        </div>
-      </div>
-    </div> -->
-
-    <!-- PRODUCT 4 -->
-    <!-- <div class="bg-white rounded-3xl border border-slate-100 overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
-      <div class="relative bg-slate-50 aspect-square overflow-hidden">
-        <img
-          src="https://images.unsplash.com/photo-1525547719571-a2d4ac8945e2?q=80&w=1200&auto=format&fit=crop"
-          class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
-          alt="Gaming Laptop"
-        />
-        <button class="absolute top-4 right-4 bg-white/80 backdrop-blur-sm w-8 h-8 rounded-full flex items-center justify-center text-sm shadow-sm hover:bg-white hover:scale-110 active:scale-95 transition-all text-slate-600" title="Add to Wishlist">
-          ♥
-        </button>
-      </div>
-
-      <div class="p-6">
-        <span class="text-[10px] uppercase font-bold tracking-wider text-slate-400">Laptops</span>
-        <h3 class="text-lg font-bold text-slate-900 mt-1 truncate group-hover:text-indigo-600 transition-colors">
-          ASUS ROG Gaming Laptop
-        </h3>
-        <div class="flex items-center gap-1 mt-1 text-xs text-amber-500 font-medium">
-          <span>★ 4.9</span> <span class="text-slate-300">(116)</span>
-        </div>
-        <div class="mt-4 flex items-center justify-between">
-          <span class="text-xl font-black text-slate-900">$2,499</span>
-          <button class="bg-slate-100 hover:bg-slate-900 text-slate-800 hover:text-white font-semibold text-xs px-4 py-2.5 rounded-xl active:scale-95 transition-all">
-            Add To Cart
-          </button>
-        </div>
-      </div>
-    </div> -->
+   
 
   </div>
 </section>
@@ -152,6 +121,8 @@
 
 <script>
 import axios from "axios";
+import { useCartStore } from '@/stores/cart'
+
 
     export default {
          data() {
@@ -159,6 +130,11 @@ import axios from "axios";
       products: [],
       categories: [],
       brands: [],
+      cartStore: useCartStore(),
+
+    
+
+
     };
     
   },
@@ -166,9 +142,15 @@ import axios from "axios";
     this.fetchProducts();
     this.fetchCategories();
     this.fetchBrands();
+    this.cartStore.loadCartFromLocalStorage();
+
     
   },
   methods:{
+   formatPrice(price) {
+    return new Intl.NumberFormat('vi-VN').format(price);
+  },
+   
   isNewProduct(product) {
       const createdAt = new Date(product.created_at)
       const now = new Date()
@@ -202,6 +184,7 @@ import axios from "axios";
         console.error("Error fetching brands:", error);
       }
     },
+   
   },
     }
 </script>
