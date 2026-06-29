@@ -47,7 +47,7 @@
           <span>★ 4.9</span> <span class="text-slate-300">(42)</span>
         </div>
         <div class="mt-4 flex items-center justify-between">
-          <span class="text-xl font-black text-slate-900">{{ product.price }}</span>
+          <span class="text-xl font-black text-slate-900">{{formatPrice ( product.price) }}₫</span>
           <button 
           @click="cartStore.addToCart(product)"
           class="bg-slate-100 hover:bg-slate-900 text-slate-800 hover:text-white font-semibold text-xs px-4 py-2.5 rounded-xl active:scale-95 transition-all">
@@ -147,7 +147,9 @@ import { useCartStore } from '@/stores/cart'
     
   },
   methods:{
-   
+   formatPrice(price) {
+    return new Intl.NumberFormat('vi-VN').format(price);
+  },
    
   isNewProduct(product) {
       const createdAt = new Date(product.created_at)
